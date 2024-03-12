@@ -8,9 +8,7 @@ class PersonDataPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final personProviderWatcher = ref.watch(peopleProvider);
-    return Container(
-      child: Text('Person Data Page'),
-    );
+    ref.watch(peopleProvider);
+    return const Text('Person Data Page');
   }
 }

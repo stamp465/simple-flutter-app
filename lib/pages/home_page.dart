@@ -27,13 +27,14 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    final selectedIndexWatcher = ref.watch(bottomNavigationIndexProvider);
+    final bottomNavigationIndexWatcher =
+        ref.watch(bottomNavigationIndexProvider);
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Colors.purple[100],
         title: Text(widget.title),
       ),
-      body: _widgetOptions.elementAt(selectedIndexWatcher),
+      body: _widgetOptions.elementAt(bottomNavigationIndexWatcher),
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
@@ -49,7 +50,7 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
             label: 'ข้อมูลแต่ละบุคคล',
           ),
         ],
-        currentIndex: selectedIndexWatcher,
+        currentIndex: bottomNavigationIndexWatcher,
         selectedItemColor: Colors.purple[400],
         onTap: (index) {
           ref.read(bottomNavigationIndexProvider.notifier).state = index;

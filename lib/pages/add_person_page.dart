@@ -24,6 +24,39 @@ class AddPersonPageState extends ConsumerState<AddPersonPage> {
       TextEditingController();
   final TextEditingController _personDataAddressController =
       TextEditingController();
+  final TextEditingController _personDataProvinceController =
+      TextEditingController();
+
+  void onStepCancel(int stepperIndex) {
+    switch (stepperIndex) {
+      case 0:
+        _personDataFirstnameController.clear();
+        _personDataLastnameController.clear();
+      case 1:
+        _personDataAddressController.clear();
+    }
+    if (stepperIndex > 0) {
+      ref.read(_stepperIndex.notifier).state -= 1;
+    }
+  }
+
+  void onStepContinue(int stepperIndex) {
+    if (stepperIndex < _maxStep - 1) {
+      ref.read(_stepperIndex.notifier).state += 1;
+    }
+    if (stepperIndex == _maxStep - 1) {
+      final personProviderWatcher = ref.watch(peopleProvider);
+      ref.read(peopleProvider.notifier).state.add(
+            Person(
+              id: personProviderWatcher.length + 1,
+              firstname: _personDataFirstnameController.text,
+              lastname: _personDataLastnameController.text,
+              address: _personDataAddressController.text,
+              province: _personDataProvinceController.text,
+            ),
+          );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -36,30 +69,10 @@ class AddPersonPageState extends ConsumerState<AddPersonPage> {
           Stepper(
             currentStep: stepperIndexWatcher,
             onStepCancel: () {
-              switch (stepperIndexWatcher) {
-                case 0:
-                  _personDataFirstnameController.clear();
-                  _personDataLastnameController.clear();
-                case 1:
-                  _personDataAddressController.clear();
-              }
-              if (stepperIndexWatcher > 0) {
-                ref.read(_stepperIndex.notifier).state -= 1;
-              }
+              onStepCancel(stepperIndexWatcher);
             },
             onStepContinue: () {
-              if (stepperIndexWatcher < _maxStep - 1) {
-                ref.read(_stepperIndex.notifier).state += 1;
-              }
-              if (stepperIndexWatcher == _maxStep - 1) {
-                ref.read(peopleProvider.notifier).state.add(
-                      Person(
-                        firstname: 'firstname',
-                        lastname: 'lastname',
-                        address: 'address',
-                      ),
-                    );
-              }
+              onStepContinue(stepperIndexWatcher);
             },
             onStepTapped: (int index) {
               ref.read(_stepperIndex.notifier).state = index;
@@ -105,6 +118,11 @@ class AddPersonPageState extends ConsumerState<AddPersonPage> {
                       TextFieldProvider(
                         hintText: 'Address',
                         textController: _personDataAddressController,
+                      ),
+                      const SizedBox(height: 16),
+                      TextFieldProvider(
+                        hintText: 'Province',
+                        textController: _personDataProvinceController,
                       ),
                     ],
                   ),
