@@ -3,9 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:isar/isar.dart';
 import 'package:simple_people_data_list_app/data_models/person.dart';
 import 'package:simple_people_data_list_app/utils/datetime_utils.dart';
-import 'package:simple_people_data_list_app/widgets/textfield_provider.dart';
 
 import '../database/database.dart';
+import '../widgets/custom_textfield.dart';
+
+final addPersonDataErrorProvider = StateProvider<String?>((ref) {
+  return null;
+});
 
 class AddPersonPage extends ConsumerStatefulWidget {
   const AddPersonPage({super.key});
@@ -22,15 +26,15 @@ class AddPersonPageState extends ConsumerState<AddPersonPage> {
   });
 
   final TextEditingController _personDataFirstnameController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _personDataLastnameController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _personDataAddressController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _personDataProvinceController =
-      TextEditingController();
+  TextEditingController();
   final TextEditingController _personDataDateOfBirthController =
-      TextEditingController();
+  TextEditingController();
 
   void onStepCancel(int stepperIndex) {
     switch (stepperIndex) {
@@ -43,15 +47,50 @@ class AddPersonPageState extends ConsumerState<AddPersonPage> {
         _personDataAddressController.clear();
     }
     if (stepperIndex > 0) {
-      ref.read(_stepperIndex.notifier).state -= 1;
+      ref
+          .read(_stepperIndex.notifier)
+          .state -= 1;
     }
+  }
+
+  bool isEmptyStringInForm() {
+    final isEmptyString = _personDataFirstnameController.text.isEmpty ||
+        _personDataLastnameController.text.isEmpty ||
+        _personDataDateOfBirthController.text.isEmpty ||
+        _personDataAddressController.text.isEmpty ||
+        _personDataProvinceController.text.isEmpty;
+    if (isEmptyString) {
+      ref
+          .read(addPersonDataErrorProvider.notifier)
+          .state =
+      'กรุณากรอกข้อมูลให้ครบถ้วน';
+    } else {
+      ref
+          .read(addPersonDataErrorProvider.notifier)
+          .state = null;
+    }
+    return isEmptyString;
+  }
+
+  void clearAllTextController() {
+    _personDataFirstnameController.clear();
+    _personDataLastnameController.clear();
+    _personDataDateOfBirthController.clear();
+    _personDataAddressController.clear();
+    _personDataProvinceController.clear();
   }
 
   void onStepContinue(int stepperIndex) async {
     if (stepperIndex < _maxStep - 1) {
-      ref.read(_stepperIndex.notifier).state += 1;
+      ref
+          .read(_stepperIndex.notifier)
+          .state += 1;
     }
     if (stepperIndex == _maxStep - 1) {
+      if (isEmptyStringInForm()) {
+        return;
+      }
+
       final newPerson = Person()
         ..firstname = _personDataFirstnameController.text
         ..lastname = _personDataLastnameController.text
@@ -69,6 +108,10 @@ class AddPersonPageState extends ConsumerState<AddPersonPage> {
         await isarDB.writeTxn(() async {
           await isarDB.persons.put(newPerson);
         });
+        clearAllTextController();
+        ref
+            .read(_stepperIndex.notifier)
+            .state = 0;
       }
     }
   }
@@ -86,6 +129,7 @@ class AddPersonPageState extends ConsumerState<AddPersonPage> {
   @override
   Widget build(BuildContext context) {
     final stepperIndexWatcher = ref.watch(_stepperIndex);
+    final addPersonDataErrorWatcher = ref.watch(addPersonDataErrorProvider);
 
     return SingleChildScrollView(
       child: Column(
@@ -99,8 +143,10 @@ class AddPersonPageState extends ConsumerState<AddPersonPage> {
             onStepContinue: () {
               onStepContinue(stepperIndexWatcher);
             },
-            onStepTapped: (int index) {
-              ref.read(_stepperIndex.notifier).state = index;
+            onStepTapped: (stepperIndex) {
+              ref
+                  .read(_stepperIndex.notifier)
+                  .state = stepperIndex;
             },
             steps: [
               Step(
@@ -109,14 +155,20 @@ class AddPersonPageState extends ConsumerState<AddPersonPage> {
                   alignment: Alignment.centerLeft,
                   child: Column(
                     children: [
-                      TextFieldProvider(
+                      CustomTextField(
                         hintText: 'Firstname',
                         textController: _personDataFirstnameController,
+                        onChange: (_) {
+                          isEmptyStringInForm();
+                        },
                       ),
                       const SizedBox(height: 16),
-                      TextFieldProvider(
+                      CustomTextField(
                         hintText: 'Lastname',
                         textController: _personDataLastnameController,
+                        onChange: (_) {
+                          isEmptyStringInForm();
+                        },
                       ),
                     ],
                   ),
@@ -128,7 +180,7 @@ class AddPersonPageState extends ConsumerState<AddPersonPage> {
                   alignment: Alignment.centerLeft,
                   child: Column(
                     children: [
-                      TextFieldProvider(
+                      CustomTextField(
                         hintText: 'Date Of Birth',
                         textController: _personDataDateOfBirthController,
                         onTap: () async {
@@ -145,6 +197,9 @@ class AddPersonPageState extends ConsumerState<AddPersonPage> {
                                 DateTimeUtils.dobDateToString(pickDOB);
                           }
                         },
+                        onChange: (_) {
+                          isEmptyStringInForm();
+                        },
                       ),
                     ],
                   ),
@@ -155,16 +210,31 @@ class AddPersonPageState extends ConsumerState<AddPersonPage> {
                 content: Container(
                   alignment: Alignment.centerLeft,
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      TextFieldProvider(
+                      CustomTextField(
                         hintText: 'Address',
                         textController: _personDataAddressController,
+                        onChange: (_) {
+                          isEmptyStringInForm();
+                        },
                       ),
                       const SizedBox(height: 16),
-                      TextFieldProvider(
+                      CustomTextField(
                         hintText: 'Province',
                         textController: _personDataProvinceController,
+                        onChange: (_) {
+                          isEmptyStringInForm();
+                        },
                       ),
+                      if (addPersonDataErrorWatcher != null) ...[
+                        const SizedBox(height: 16),
+                        Text(
+                          addPersonDataErrorWatcher,
+                          style: const TextStyle(
+                              color: Colors.redAccent, fontSize: 16),
+                        ),
+                      ],
                     ],
                   ),
                 ),
