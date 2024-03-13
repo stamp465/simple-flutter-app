@@ -39,15 +39,15 @@ class MyHomePageState extends ConsumerState<MyHomePage> {
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.group_outlined),
-            label: 'รายชื่อทั้งหมด',
+            label: 'List of name',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.assessment_outlined),
-            label: 'กรอกข้อมูล',
+            label: 'Add new person',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person_outline),
-            label: 'ข้อมูลแต่ละบุคคล',
+            label: 'Person data',
           ),
         ],
         currentIndex: bottomNavigationIndexWatcher,

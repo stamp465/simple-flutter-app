@@ -42,7 +42,10 @@ class PersonListByProvinceWidget extends ConsumerWidget {
                   children: [
                     Container(
                       width: double.infinity,
-                      padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                      padding: const EdgeInsets.symmetric(
+                        vertical: 4,
+                        horizontal: 8,
+                      ),
                       color: Colors.purple,
                       child: Text(
                         'Province: ${data.key}',
