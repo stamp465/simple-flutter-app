@@ -5,10 +5,6 @@ import 'package:simple_people_data_list_app/data_models/person.dart';
 
 import '../database/database.dart';
 
-final personInformationProvider = StateProvider<List<Person>>((ref) {
-  return [];
-});
-
 class PersonListNotifier extends ChangeNotifier {
   final persons = isarDB.persons;
   List<Person> list = [];

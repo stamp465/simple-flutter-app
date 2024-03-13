@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:simple_people_data_list_app/data_models/person.dart';
+import 'package:simple_people_data_list_app/providers/bottom_navigation_index_provider.dart';
 
 import '../database/database.dart';
+import '../providers/person_selected_provider.dart';
 
 // ignore: must_be_immutable
 class PersonCard extends ConsumerWidget {
@@ -18,13 +20,18 @@ class PersonCard extends ConsumerWidget {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Column(
-            children: [
-              Text('ชื่อ-สกุล: ${person.firstname} ${person.lastname}'),
-              Text('วันเกิด: ${person.dob}'),
-              Text('ทีอยู่: ${person.address}'),
-              Text('จังหวัด: ${person.province}'),
-            ],
+          InkWell(
+            onTap: () {
+              ref.read(personSelectedProvider.notifier).state = person;
+              ref.read(bottomNavigationIndexProvider.notifier).state = 2;
+            },
+            child: Column(
+              children: [
+                Text('ชื่อ-สกุล: ${person.firstname} ${person.lastname}'),
+                Text('จังหวัด: ${person.province}'),
+                Text('คลิกเพื่อดูรายละเอียดเพิ่มเติม'),
+              ],
+            ),
           ),
           IconButton(
             icon: const Text('ลบ'),

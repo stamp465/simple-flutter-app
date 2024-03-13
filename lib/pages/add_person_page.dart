@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:isar/isar.dart';
 import 'package:simple_people_data_list_app/data_models/person.dart';
 import 'package:simple_people_data_list_app/utils/datetime_utils.dart';
 import 'package:simple_people_data_list_app/widgets/textfield_provider.dart';
@@ -58,9 +59,17 @@ class AddPersonPageState extends ConsumerState<AddPersonPage> {
         ..province = _personDataProvinceController.text
         ..dob = _personDataDateOfBirthController.text;
 
-      await isarDB.writeTxn(() async {
-        await isarDB.persons.put(newPerson);
-      });
+      final havePerson = await isarDB.persons
+          .filter()
+          .firstnameEqualTo(newPerson.firstname)
+          .lastnameEqualTo(newPerson.lastname)
+          .findFirst();
+
+      if (havePerson == null) {
+        await isarDB.writeTxn(() async {
+          await isarDB.persons.put(newPerson);
+        });
+      }
     }
   }
 

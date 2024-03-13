@@ -14,7 +14,7 @@ class Person {
 
   @override
   String toString() {
-    return 'Contact{id: $id, firstname: $firstname, lastname: $lastname, '
+    return 'Person{id: $id, firstname: $firstname, lastname: $lastname, '
         'address: $address, province: $province, dob: $dob}';
   }
 }
