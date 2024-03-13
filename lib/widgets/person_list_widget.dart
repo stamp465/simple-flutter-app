@@ -11,13 +11,21 @@ class PersonListWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final personInformationWatcher = ref.watch(personsList).list;
 
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          ...personInformationWatcher.map((person) {
-            return PersonCard(person: person);
-          })
-        ],
+    return Container(
+      key: const Key('PersonListWidget'),
+      color: Colors.purple[50],
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            ...personInformationWatcher.map((person) {
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: PersonCard(person: person),
+              );
+            })
+          ],
+        ),
       ),
     );
   }

@@ -8,33 +8,73 @@ import '../providers/person_selected_provider.dart';
 
 // ignore: must_be_immutable
 class PersonCard extends ConsumerWidget {
-  PersonCard({required this.person, super.key});
+  PersonCard({required this.person, this.showProvince = true, super.key});
 
   Person person;
+
+  bool showProvince;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return Container(
-      margin: const EdgeInsets.all(8),
-      padding: const EdgeInsets.all(16),
+      key: const Key('PersonCard'),
+      padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.purple),
+        color: Colors.white,
+      ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          InkWell(
-            onTap: () {
-              ref.read(personSelectedProvider.notifier).state = person;
-              ref.read(bottomNavigationIndexProvider.notifier).state = 2;
-            },
-            child: Column(
-              children: [
-                Text('ชื่อ-สกุล: ${person.firstname} ${person.lastname}'),
-                Text('จังหวัด: ${person.province}'),
-                Text('คลิกเพื่อดูรายละเอียดเพิ่มเติม'),
-              ],
+          Expanded(
+            child: InkWell(
+              focusColor: Colors.purple,
+              hoverColor: Colors.purple,
+              key: const Key('PersonCardInkWell'),
+              onTap: () {
+                ref.read(personSelectedProvider.notifier).state = person;
+                ref.read(bottomNavigationIndexProvider.notifier).state = 2;
+              },
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Name: ${person.firstname} ${person.lastname}',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 18,
+                    ),
+                  ),
+                  if (showProvince) Text('Province: ${person.province}'),
+                  const Text(
+                    'Click this card for see more details...',
+                    style: TextStyle(
+                      color: Colors.purple,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
           IconButton(
-            icon: const Text('ลบ'),
+            key: const Key('PersonCardDelete'),
+            icon: const Column(
+              children: [
+                Icon(
+                  Icons.delete_outline,
+                  color: Colors.purple,
+                  size: 20,
+                ),
+                Text(
+                  'Delete',
+                  style: TextStyle(
+                    color: Colors.purple,
+                    fontSize: 14,
+                  ),
+                ),
+              ],
+            ),
             onPressed: () async {
               await isarDB.writeTxn(() async {
                 await isarDB.persons.delete(person.id);

@@ -24,23 +24,46 @@ class PersonListByProvinceWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final personInformationWatcher = ref.watch(personsList).list;
 
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          ...getMapPeopleByProvince(personInformationWatcher)
-              .entries
-              .toList()
-              .map((data) {
-            return Column(
-              children: [
-                Text('จังหวัด: ${data.key}'),
-                ...data.value.map((person) {
-                  return PersonCard(person: person);
-                })
-              ],
-            );
-          }),
-        ],
+    return Container(
+      key: const Key('PersonListByProvinceWidget'),
+      color: Colors.purple[50],
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: SingleChildScrollView(
+        child: Column(
+          children: [
+            ...getMapPeopleByProvince(personInformationWatcher)
+                .entries
+                .toList()
+                .map((data) {
+              return Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Container(
+                      width: double.infinity,
+                      padding: EdgeInsets.symmetric(vertical: 4, horizontal: 8),
+                      color: Colors.purple,
+                      child: Text(
+                        'Province: ${data.key}',
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ),
+                    ...data.value.map((person) {
+                      return PersonCard(
+                        person: person,
+                        showProvince: false,
+                      );
+                    })
+                  ],
+                ),
+              );
+            }),
+          ],
+        ),
       ),
     );
   }

@@ -23,6 +23,7 @@ class PersonListPageState extends ConsumerState<PersonListPage> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      key: const Key('PersonListPage'),
       children: [
         const Expanded(
           child: DefaultTabController(
@@ -34,8 +35,8 @@ class PersonListPageState extends ConsumerState<PersonListPage> {
                   height: 40,
                   child: TabBar(
                     tabs: [
-                      Tab(text: 'รายชื่อทั้งหมด'),
-                      Tab(text: 'รายชื่อตามจังหวัด'),
+                      Tab(text: 'List of name'),
+                      Tab(text: 'List of name (By province)'),
                     ],
                   ),
                 ),
@@ -52,15 +53,29 @@ class PersonListPageState extends ConsumerState<PersonListPage> {
           ),
         ),
         Container(
-          height: 60,
-          color: Colors.amber,
+          height: 40,
+          color: Colors.purple[700],
           child: Center(
             child: IconButton(
-              icon: const Text('เพิ่มข้อมูล'),
+              icon: const Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.add_circle_outline,
+                    color: Colors.white,
+                    size: 20,
+                  ),
+                  SizedBox(width: 8),
+                  Text(
+                    'Add New Person Data',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
+              ),
               onPressed: () {
-                ref
-                    .read(bottomNavigationIndexProvider.notifier)
-                    .state = 1;
+                ref.read(bottomNavigationIndexProvider.notifier).state = 1;
               },
             ),
           ),
