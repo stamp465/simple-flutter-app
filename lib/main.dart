@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:simple_people_data_list_app/database/database.dart';
 import 'package:simple_people_data_list_app/pages/home_page.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await isarInit();
   runApp(const ProviderScope(child: MyApp()));
 }
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:simple_people_data_list_app/providers/bottom_navigation_index_provider.dart';
+import 'package:simple_people_data_list_app/providers/person_information_provider.dart';
 import 'package:simple_people_data_list_app/widgets/person_list_province_widget.dart';
 import 'package:simple_people_data_list_app/widgets/person_list_widget.dart';
 
@@ -12,6 +13,13 @@ class PersonListPage extends ConsumerStatefulWidget {
 }
 
 class PersonListPageState extends ConsumerState<PersonListPage> {
+  @override
+  void initState() {
+    super.initState();
+    ref.read(personsList.notifier).init();
+    ref.read(personsList.notifier).streamDB();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -50,7 +58,9 @@ class PersonListPageState extends ConsumerState<PersonListPage> {
             child: IconButton(
               icon: const Text('เพิ่มข้อมูล'),
               onPressed: () {
-                ref.read(bottomNavigationIndexProvider.notifier).state = 1;
+                ref
+                    .read(bottomNavigationIndexProvider.notifier)
+                    .state = 1;
               },
             ),
           ),

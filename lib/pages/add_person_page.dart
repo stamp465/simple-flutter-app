@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:simple_people_data_list_app/data_models/person.dart';
-import 'package:simple_people_data_list_app/providers/person_information_provider.dart';
 import 'package:simple_people_data_list_app/utils/datetime_utils.dart';
 import 'package:simple_people_data_list_app/widgets/textfield_provider.dart';
+
+import '../database/database.dart';
 
 class AddPersonPage extends ConsumerStatefulWidget {
   const AddPersonPage({super.key});
@@ -45,22 +46,21 @@ class AddPersonPageState extends ConsumerState<AddPersonPage> {
     }
   }
 
-  void onStepContinue(int stepperIndex) {
+  void onStepContinue(int stepperIndex) async {
     if (stepperIndex < _maxStep - 1) {
       ref.read(_stepperIndex.notifier).state += 1;
     }
     if (stepperIndex == _maxStep - 1) {
-      final personInformationWatcher = ref.watch(personInformationProvider);
-      ref.read(personInformationProvider.notifier).state.add(
-            Person(
-              id: personInformationWatcher.length + 1,
-              firstname: _personDataFirstnameController.text,
-              lastname: _personDataLastnameController.text,
-              address: _personDataAddressController.text,
-              province: _personDataProvinceController.text,
-              dob: _personDataDateOfBirthController.text,
-            ),
-          );
+      final newPerson = Person()
+        ..firstname = _personDataFirstnameController.text
+        ..lastname = _personDataLastnameController.text
+        ..address = _personDataAddressController.text
+        ..province = _personDataProvinceController.text
+        ..dob = _personDataDateOfBirthController.text;
+
+      await isarDB.writeTxn(() async {
+        await isarDB.persons.put(newPerson);
+      });
     }
   }
 

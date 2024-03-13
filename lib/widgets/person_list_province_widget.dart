@@ -22,7 +22,7 @@ class PersonListByProvinceWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final personInformationWatcher = ref.watch(personInformationProvider);
+    final personInformationWatcher = ref.watch(personsList).list;
 
     return SingleChildScrollView(
       child: Column(
