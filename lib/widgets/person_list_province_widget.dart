@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:simple_people_data_list_app/widgets/person_card.dart';
 
 import '../data_models/person.dart';
-import '../providers/people_provider.dart';
+import '../providers/person_information_provider.dart';
 
 class PersonListByProvinceWidget extends ConsumerWidget {
   const PersonListByProvinceWidget({super.key});
@@ -22,12 +22,12 @@ class PersonListByProvinceWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final personProviderWatcher = ref.watch(peopleProvider);
+    final personInformationWatcher = ref.watch(personInformationProvider);
 
     return SingleChildScrollView(
       child: Column(
         children: [
-          ...getMapPeopleByProvince(personProviderWatcher)
+          ...getMapPeopleByProvince(personInformationWatcher)
               .entries
               .toList()
               .map((data) {

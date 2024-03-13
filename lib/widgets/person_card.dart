@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:simple_people_data_list_app/data_models/person.dart';
 
-import '../providers/people_provider.dart';
+import '../providers/person_information_provider.dart';
 
 // ignore: must_be_immutable
 class PersonCard extends ConsumerWidget {
@@ -27,8 +27,8 @@ class PersonCard extends ConsumerWidget {
           IconButton(
             icon: const Text('ลบ'),
             onPressed: () {
-              ref.read(peopleProvider.notifier).state = ref
-                  .watch(peopleProvider)
+              ref.read(personInformationProvider.notifier).state = ref
+                  .watch(personInformationProvider)
                   .where(
                     (element) => element.id != person.id,
                   )

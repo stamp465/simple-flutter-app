@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:simple_people_data_list_app/data_models/person.dart';
-import 'package:simple_people_data_list_app/providers/people_provider.dart';
+import 'package:simple_people_data_list_app/providers/person_information_provider.dart';
 import 'package:simple_people_data_list_app/widgets/textfield_provider.dart';
 
 class AddPersonPage extends ConsumerStatefulWidget {
@@ -45,10 +45,10 @@ class AddPersonPageState extends ConsumerState<AddPersonPage> {
       ref.read(_stepperIndex.notifier).state += 1;
     }
     if (stepperIndex == _maxStep - 1) {
-      final personProviderWatcher = ref.watch(peopleProvider);
-      ref.read(peopleProvider.notifier).state.add(
+      final personInformationWatcher = ref.watch(personInformationProvider);
+      ref.read(personInformationProvider.notifier).state.add(
             Person(
-              id: personProviderWatcher.length + 1,
+              id: personInformationWatcher.length + 1,
               firstname: _personDataFirstnameController.text,
               lastname: _personDataLastnameController.text,
               address: _personDataAddressController.text,
