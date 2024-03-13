@@ -26,15 +26,15 @@ class AddPersonPageState extends ConsumerState<AddPersonPage> {
   });
 
   final TextEditingController _personDataFirstnameController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _personDataLastnameController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _personDataAddressController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _personDataProvinceController =
-  TextEditingController();
+      TextEditingController();
   final TextEditingController _personDataDateOfBirthController =
-  TextEditingController();
+      TextEditingController();
 
   void onStepCancel(int stepperIndex) {
     switch (stepperIndex) {
@@ -47,9 +47,7 @@ class AddPersonPageState extends ConsumerState<AddPersonPage> {
         _personDataAddressController.clear();
     }
     if (stepperIndex > 0) {
-      ref
-          .read(_stepperIndex.notifier)
-          .state -= 1;
+      ref.read(_stepperIndex.notifier).state -= 1;
     }
   }
 
@@ -60,14 +58,10 @@ class AddPersonPageState extends ConsumerState<AddPersonPage> {
         _personDataAddressController.text.isEmpty ||
         _personDataProvinceController.text.isEmpty;
     if (isEmptyString) {
-      ref
-          .read(addPersonDataErrorProvider.notifier)
-          .state =
-      'กรุณากรอกข้อมูลให้ครบถ้วน';
+      ref.read(addPersonDataErrorProvider.notifier).state =
+          'Please fill out the information completely';
     } else {
-      ref
-          .read(addPersonDataErrorProvider.notifier)
-          .state = null;
+      ref.read(addPersonDataErrorProvider.notifier).state = null;
     }
     return isEmptyString;
   }
@@ -82,9 +76,7 @@ class AddPersonPageState extends ConsumerState<AddPersonPage> {
 
   void onStepContinue(int stepperIndex) async {
     if (stepperIndex < _maxStep - 1) {
-      ref
-          .read(_stepperIndex.notifier)
-          .state += 1;
+      ref.read(_stepperIndex.notifier).state += 1;
     }
     if (stepperIndex == _maxStep - 1) {
       if (isEmptyStringInForm()) {
@@ -104,14 +96,32 @@ class AddPersonPageState extends ConsumerState<AddPersonPage> {
           .lastnameEqualTo(newPerson.lastname)
           .findFirst();
 
+      if (!mounted) {
+        return;
+      }
+
       if (havePerson == null) {
         await isarDB.writeTxn(() async {
           await isarDB.persons.put(newPerson);
         });
         clearAllTextController();
-        ref
-            .read(_stepperIndex.notifier)
-            .state = 0;
+        ref.read(_stepperIndex.notifier).state = 0;
+
+        if (!mounted) {
+          return;
+        }
+
+        const snackBar = SnackBar(
+          content: Text('SUCCESS - add new person data done'),
+          duration: Duration(seconds: 3),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      } else {
+        const snackBar = SnackBar(
+          content: Text('FAILED - already have this person'),
+          duration: Duration(seconds: 3),
+        );
+        ScaffoldMessenger.of(context).showSnackBar(snackBar);
       }
     }
   }
@@ -132,9 +142,22 @@ class AddPersonPageState extends ConsumerState<AddPersonPage> {
     final addPersonDataErrorWatcher = ref.watch(addPersonDataErrorProvider);
 
     return SingleChildScrollView(
+      key: const Key('AddPersonPage'),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
+          const SizedBox(height: 16),
+          const Padding(
+            padding: EdgeInsets.symmetric(horizontal: 32),
+            child: Text(
+              'Add new person data',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Colors.purple,
+              ),
+            ),
+          ),
           Stepper(
             currentStep: stepperIndexWatcher,
             onStepCancel: () {
@@ -144,9 +167,7 @@ class AddPersonPageState extends ConsumerState<AddPersonPage> {
               onStepContinue(stepperIndexWatcher);
             },
             onStepTapped: (stepperIndex) {
-              ref
-                  .read(_stepperIndex.notifier)
-                  .state = stepperIndex;
+              ref.read(_stepperIndex.notifier).state = stepperIndex;
             },
             steps: [
               Step(
