@@ -5,11 +5,13 @@ class TextFieldProvider extends ConsumerWidget {
   const TextFieldProvider({
     required this.textController,
     required this.hintText,
+    this.onTap,
     super.key,
   });
 
   final TextEditingController textController;
   final String hintText;
+  final Future<void> Function()? onTap;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -20,6 +22,8 @@ class TextFieldProvider extends ConsumerWidget {
         labelText: hintText,
       ),
       style: const TextStyle(fontSize: 20),
+      onTap: onTap,
+      readOnly: onTap != null,
     );
   }
 }

@@ -6,6 +6,7 @@ class Person {
     required this.lastname,
     required this.address,
     required this.province,
+    required this.dob,
   });
 
   final int id;
@@ -13,6 +14,7 @@ class Person {
   final String lastname;
   final String address;
   final String province;
+  final String dob;
 
   factory Person.fromJson(Map<String, dynamic> json) {
     return Person(
@@ -21,6 +23,7 @@ class Person {
       lastname: json['lastname'],
       address: json['address'],
       province: json['province'],
+      dob: json['dob'],
     );
   }
 
@@ -31,6 +34,7 @@ class Person {
     data['lastname'] = lastname;
     data['address'] = address;
     data['province'] = province;
+    data['dob'] = dob;
     return data;
   }
 }

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:simple_people_data_list_app/data_models/person.dart';
 import 'package:simple_people_data_list_app/providers/person_information_provider.dart';
+import 'package:simple_people_data_list_app/utils/datetime_utils.dart';
 import 'package:simple_people_data_list_app/widgets/textfield_provider.dart';
 
 class AddPersonPage extends ConsumerStatefulWidget {
@@ -12,7 +13,7 @@ class AddPersonPage extends ConsumerStatefulWidget {
 }
 
 class AddPersonPageState extends ConsumerState<AddPersonPage> {
-  static const _maxStep = 2;
+  static const _maxStep = 3;
 
   final _stepperIndex = StateProvider<int>((ref) {
     return 0;
@@ -26,6 +27,8 @@ class AddPersonPageState extends ConsumerState<AddPersonPage> {
       TextEditingController();
   final TextEditingController _personDataProvinceController =
       TextEditingController();
+  final TextEditingController _personDataDateOfBirthController =
+      TextEditingController();
 
   void onStepCancel(int stepperIndex) {
     switch (stepperIndex) {
@@ -33,6 +36,8 @@ class AddPersonPageState extends ConsumerState<AddPersonPage> {
         _personDataFirstnameController.clear();
         _personDataLastnameController.clear();
       case 1:
+        _personDataDateOfBirthController.clear();
+      case 2:
         _personDataAddressController.clear();
     }
     if (stepperIndex > 0) {
@@ -53,9 +58,20 @@ class AddPersonPageState extends ConsumerState<AddPersonPage> {
               lastname: _personDataLastnameController.text,
               address: _personDataAddressController.text,
               province: _personDataProvinceController.text,
+              dob: _personDataDateOfBirthController.text,
             ),
           );
     }
+  }
+
+  Widget buildStepperTitle(String title) {
+    return Text(
+      title,
+      style: const TextStyle(
+        fontSize: 18,
+        fontWeight: FontWeight.bold,
+      ),
+    );
   }
 
   @override
@@ -79,13 +95,7 @@ class AddPersonPageState extends ConsumerState<AddPersonPage> {
             },
             steps: [
               Step(
-                title: const Text(
-                  'Enter Firstname & Lastname',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
+                title: buildStepperTitle('Enter Firstname & Lastname'),
                 content: Container(
                   alignment: Alignment.centerLeft,
                   child: Column(
@@ -104,13 +114,35 @@ class AddPersonPageState extends ConsumerState<AddPersonPage> {
                 ),
               ),
               Step(
-                title: const Text(
-                  'Enter Address according to ID card',
-                  style: TextStyle(
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                title: buildStepperTitle('Enter Date Of Birth'),
+                content: Container(
+                  alignment: Alignment.centerLeft,
+                  child: Column(
+                    children: [
+                      TextFieldProvider(
+                        hintText: 'Date Of Birth',
+                        textController: _personDataDateOfBirthController,
+                        onTap: () async {
+                          final pickDOB = await showDatePicker(
+                            context: context,
+                            firstDate: DateTime(1900),
+                            lastDate: DateTime.now(),
+                          );
+                          if (!mounted) {
+                            return;
+                          }
+                          if (pickDOB != null) {
+                            _personDataDateOfBirthController.text =
+                                DateTimeUtils.dobDateToString(pickDOB);
+                          }
+                        },
+                      ),
+                    ],
                   ),
                 ),
+              ),
+              Step(
+                title: buildStepperTitle('Enter Address according to ID card'),
                 content: Container(
                   alignment: Alignment.centerLeft,
                   child: Column(

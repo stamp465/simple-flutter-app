@@ -21,7 +21,9 @@ class PersonCard extends ConsumerWidget {
           Column(
             children: [
               Text('ชื่อ-สกุล: ${person.firstname} ${person.lastname}'),
+              Text('วันเกิด: ${person.dob}'),
               Text('ทีอยู่: ${person.address}'),
+              Text('จังหวัด: ${person.province}'),
             ],
           ),
           IconButton(
